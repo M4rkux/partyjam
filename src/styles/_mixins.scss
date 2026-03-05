@@ -1,0 +1,90 @@
+@use 'variables' as *;
+
+// Flex helpers
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-start {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+// Truncate text to one line
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Card surface
+@mixin card($bg: $color-surface) {
+  background: $bg;
+  border-radius: $radius-lg;
+  padding: $space-6;
+}
+
+// Button base
+@mixin btn-reset {
+  appearance: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0;
+  margin: 0;
+}
+
+// Focus ring
+@mixin focus-ring {
+  outline: 2px solid $color-green;
+  outline-offset: 2px;
+}
+
+// Responsive breakpoints
+@mixin sm {
+  @media (min-width: 480px) {
+    @content;
+  }
+}
+
+@mixin md {
+  @media (min-width: 768px) {
+    @content;
+  }
+}
+
+@mixin lg {
+  @media (min-width: 1024px) {
+    @content;
+  }
+}
+
+// Scrollbar styling
+@mixin custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: $color-elevated-2 transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $color-elevated-2;
+    border-radius: $radius-full;
+  }
+}

@@ -1,0 +1,123 @@
+@use 'styles/variables' as *;
+@use 'styles/base';
+
+// Global button styles
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  padding: $space-3 $space-6;
+  border-radius: $radius-full;
+  border: none;
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background $transition-base,
+    transform $transition-fast,
+    opacity $transition-base;
+  white-space: nowrap;
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+
+    &:active {
+      transform: none;
+    }
+  }
+
+  &--primary {
+    background: $color-green;
+    color: $color-bg;
+
+    &:hover:not(:disabled) {
+      background: $color-green-light;
+    }
+  }
+
+  &--secondary {
+    background: transparent;
+    color: $color-text;
+    border: 1px solid $color-border;
+
+    &:hover:not(:disabled) {
+      border-color: $color-border-hover;
+      background: $color-elevated;
+    }
+  }
+
+  &--ghost {
+    background: transparent;
+    color: $color-text-secondary;
+
+    &:hover:not(:disabled) {
+      color: $color-text;
+    }
+  }
+
+  &--danger {
+    background: $color-error;
+    color: $color-text;
+
+    &:hover:not(:disabled) {
+      opacity: 0.85;
+    }
+  }
+
+  &--sm {
+    padding: $space-1 $space-3;
+    font-size: $font-size-xs;
+  }
+
+  &--lg {
+    padding: $space-4 $space-8;
+    font-size: $font-size-base;
+  }
+
+  &--icon {
+    padding: $space-2;
+    border-radius: $radius-md;
+  }
+}
+
+// Global input styles
+.input {
+  width: 100%;
+  padding: $space-3 $space-4;
+  background: $color-elevated;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  color: $color-text;
+  font-size: $font-size-base;
+  transition: border-color $transition-base;
+
+  &::placeholder {
+    color: $color-text-muted;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $color-text-secondary;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-green;
+    outline-offset: 2px;
+  }
+}
+
+// Error message
+.error-msg {
+  color: $color-error;
+  font-size: $font-size-sm;
+  margin-top: $space-2;
+}
