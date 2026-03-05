@@ -40,6 +40,7 @@
   async function fetchPlayer() {
     try {
       const res = await fetch(`/api/${encodeURIComponent(data.username)}/player`);
+      if (res.status === 401) { location.reload(); return; }
       if (res.ok) playerState = await res.json();
     } catch {}
   }
@@ -47,6 +48,7 @@
   async function fetchAdditions() {
     try {
       const res = await fetch(`/api/${encodeURIComponent(data.username)}/queue`);
+      if (res.status === 401) { location.reload(); return; }
       if (res.ok) additions = await res.json();
     } catch {}
   }
@@ -66,6 +68,7 @@
       })
     });
 
+    if (res.status === 401) { location.reload(); return; }
     if (!res.ok) {
       const text = await res.text();
       throw new Error(text || 'Failed to add track');
@@ -80,6 +83,7 @@
       `/api/${encodeURIComponent(data.username)}/queue/${encodeURIComponent(id)}`,
       { method: 'DELETE' }
     );
+    if (res.status === 401) { location.reload(); return; }
     if (res.ok) {
       additions = additions.filter((a) => a.id !== id);
     }

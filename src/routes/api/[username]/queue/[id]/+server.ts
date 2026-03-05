@@ -13,12 +13,14 @@ export const DELETE: RequestHandler = async ({ params, cookies }) => {
   const id = params.id!;
 
   const [user] = await db
-    .select({ id: users.id })
+    .select({ id: users.id, passcode: users.passcode })
     .from(users)
     .where(eq(users.username, username))
     .limit(1);
 
   if (!user) throw error(404, 'User not found');
+
+  if (cookies.get(`pc_${username}`) !== user.passcode) throw error(401, 'Invalid passcode');
 
   const [addition] = await db
     .select()

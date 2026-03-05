@@ -6,7 +6,7 @@ import { eq } from 'drizzle-orm';
 import { getValidToken, searchTracks } from '$lib/server/spotify';
 import type { SpotifyTrack } from '$lib/types';
 
-export const GET: RequestHandler = async ({ params, url }) => {
+export const GET: RequestHandler = async ({ params, url, cookies }) => {
   const query = url.searchParams.get('q');
   if (!query || query.trim().length < 2) {
     return json([]);
@@ -21,6 +21,8 @@ export const GET: RequestHandler = async ({ params, url }) => {
     .limit(1);
 
   if (!user) throw error(404, 'User not found');
+
+  if (cookies.get(`pc_${username}`) !== user.passcode) throw error(401, 'Invalid passcode');
 
   try {
     const accessToken = await getValidToken(user.id);

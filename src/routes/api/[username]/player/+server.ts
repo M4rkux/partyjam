@@ -5,16 +5,18 @@ import { users } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { getValidToken, getPlayerState } from '$lib/server/spotify';
 
-export const GET: RequestHandler = async ({ params }) => {
+export const GET: RequestHandler = async ({ params, cookies }) => {
   const username = params.username!;
 
   const [user] = await db
-    .select({ id: users.id })
+    .select({ id: users.id, passcode: users.passcode })
     .from(users)
     .where(eq(users.username, username))
     .limit(1);
 
   if (!user) throw error(404, 'User not found');
+
+  if (cookies.get(`pc_${username}`) !== user.passcode) throw error(401, 'Invalid passcode');
 
   try {
     const accessToken = await getValidToken(user.id);
