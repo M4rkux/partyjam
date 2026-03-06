@@ -11,18 +11,36 @@ import { defaultShareSettings } from '$lib/types';
 export const GET: RequestHandler = async ({ url, cookies }) => {
   const code = url.searchParams.get('code');
   const state = url.searchParams.get('state');
+  const spotifyError = url.searchParams.get('error');
   const storedState = cookies.get('spotify_oauth_state');
 
   cookies.delete('spotify_oauth_state', { path: '/' });
 
-  if (!code || !state || state !== storedState) {
-    throw error(400, 'Invalid OAuth state');
+  if (spotifyError) {
+    throw error(400, spotifyError === 'access_denied' ? 'Login cancelled.' : `Spotify error: ${spotifyError}`);
   }
 
-  const { accessToken, refreshToken, expiresIn } = await exchangeCode(code);
+  if (!code || !state || state !== storedState) {
+    throw error(400, 'Invalid OAuth state. Please try logging in again.');
+  }
+
+  let accessToken: string, refreshToken: string, expiresIn: number;
+  try {
+    ({ accessToken, refreshToken, expiresIn } = await exchangeCode(code));
+  } catch (err) {
+    console.error('Token exchange failed:', err);
+    throw error(502, 'Failed to complete Spotify login. Please try again.');
+  }
+
   const tokenExpiresAt = new Date(Date.now() + expiresIn * 1000);
 
-  const profile = await getSpotifyProfile(accessToken);
+  let profile: Awaited<ReturnType<typeof getSpotifyProfile>>;
+  try {
+    profile = await getSpotifyProfile(accessToken);
+  } catch (err) {
+    console.error('Spotify profile fetch failed:', err);
+    throw error(502, 'Failed to fetch Spotify profile. Please try again.');
+  }
 
   const spotifyId = profile.id;
   const username = profile.id; // Spotify ID is the username (unique, URL-safe)
