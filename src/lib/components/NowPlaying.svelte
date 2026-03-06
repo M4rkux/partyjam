@@ -20,18 +20,27 @@
     localProgressMs = progressMs;
   });
 
-  // Tick every second while playing
+  // Tick every second while playing, aligning to the next second boundary first
   $effect(() => {
     if (!isPlaying || !track) return;
     const duration = track.durationMs;
-    const ticker = setInterval(() => {
-      if (localProgressMs < duration) {
+
+    const startProgress = untrack(() => localProgressMs);
+    const msToNextSecond = 1000 - (startProgress % 1000);
+
+    let interval: ReturnType<typeof setInterval>;
+    const timeout = setTimeout(() => {
+      localProgressMs = Math.min(localProgressMs + msToNextSecond, duration);
+      interval = setInterval(() => {
         localProgressMs = Math.min(localProgressMs + 1000, duration);
-      } else {
-        clearInterval(ticker);
-      }
-    }, 1000);
-    return () => clearInterval(ticker);
+        if (localProgressMs >= duration) clearInterval(interval);
+      }, 1000);
+    }, msToNextSecond);
+
+    return () => {
+      clearTimeout(timeout);
+      clearInterval(interval);
+    };
   });
 
   let progress = $derived(track ? Math.min(100, (localProgressMs / track.durationMs) * 100) : 0);
